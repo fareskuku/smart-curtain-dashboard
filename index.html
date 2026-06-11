@@ -5,10 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>NovaCurtain AI | Smart Curtain Dashboard</title>
 
-<!-- Firebase SDK -->
-<!-- Use these (compat versions) for your current dashboard -->
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+<!-- Firebase Modular SDK v12.14.0 -->
+<script type="importmap">
+  {
+    "imports": {
+      "firebase/app": "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js",
+      "firebase/database": "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js"
+    }
+  }
+</script>
 
 <style>
   * {
@@ -443,12 +448,12 @@
   </div>
 </main>
 
-<script>
+<script type="module">
   // ============================================================
   // 🔥 REPLACE WITH YOUR FIREBASE CONFIGURATION 🔥
   // Get this from Firebase Console → Project Settings → Your web app
   // ============================================================
-  const firebaseConfig = {
+  onst firebaseConfig = {
     apiKey: "AIzaSyB9k1TpKOJxEMPgQf3yGLkeN_twr1wCOBc",
     authDomain: "smart-curtain-iot.firebaseapp.com",
     databaseURL: "https://smart-curtain-iot-default-rtdb.firebaseio.com",
@@ -458,9 +463,13 @@
     appId: "1:353682612211:web:e6e757a101e1c0c4f8fc86"
   };
 
+  // Import Firebase modules (modular SDK)
+  import { initializeApp } from 'firebase/app';
+  import { getDatabase, ref, onValue, set } from 'firebase/database';
+
   // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  const database = firebase.database();
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
 
   // DOM elements
   const connBanner = document.getElementById('connBanner');
@@ -485,7 +494,7 @@
   const aiDecisionText = document.getElementById('aiDecisionText');
   const sensorHealthSpan = document.getElementById('sensorHealth');
 
-  let lastData = null;
+  let lastSensorsData = null;
 
   function updateServoFill(angle) {
     let percent = 0;
@@ -575,8 +584,9 @@
 
   // Listen to Firebase Realtime Database
   function setupFirebaseListeners() {
-    // Track connection status
-    database.ref('.info/connected').on('value', (snap) => {
+    // Connection status
+    const connectedRef = ref(database, '.info/connected');
+    onValue(connectedRef, (snap) => {
       if (snap.val() === true) {
         connBanner.classList.add('hidden');
         sensorHealthSpan.innerHTML = '☁️ Firebase connected ✅';
@@ -590,44 +600,37 @@
     });
 
     // Listen to sensors data
-    database.ref('/sensors').on('value', (snapshot) => {
+    const sensorsRef = ref(database, '/sensors');
+    onValue(sensorsRef, (snapshot) => {
       const sensorsData = snapshot.val();
       if (sensorsData) {
-        // Also get status data
-        database.ref('/status').once('value', (statusSnap) => {
+        lastSensorsData = sensorsData;
+        // Get status data
+        const statusRef = ref(database, '/status');
+        onValue(statusRef, (statusSnap) => {
           const statusData = statusSnap.val();
           updateUIFromFirebase(sensorsData, statusData);
-        });
+        }, { onlyOnce: true });
         connBanner.classList.add('hidden');
       } else {
-        // No data yet - ESP8266 hasn't sent anything
         connBanner.classList.remove('hidden');
         connBanner.innerHTML = '⏳ Waiting for ESP8266 to send data to Firebase...';
       }
     });
 
-    // Also listen to status separately for real-time updates
-    database.ref('/status').on('value', (snapshot) => {
+    // Listen to status separately for real-time updates
+    const statusRef = ref(database, '/status');
+    onValue(statusRef, (snapshot) => {
       const statusData = snapshot.val();
-      if (statusData && lastData) {
-        updateUIFromFirebase(lastData, statusData);
+      if (statusData && lastSensorsData) {
+        updateUIFromFirebase(lastSensorsData, statusData);
       }
     });
   }
 
-  // Store last sensors data for combined updates
-  database.ref('/sensors').on('value', (snapshot) => {
-    if (snapshot.val()) {
-      lastData = snapshot.val();
-    }
-  });
-
   // Send command to ESP8266 via Firebase
-  async function sendCommand(command) {
+  window.sendCommand = async function(command) {
     // Show optimistic feedback
-    const modeMap = { OPEN: 'OPEN', CLOSE: 'CLOSE', PARTIAL: 'PARTIAL', AUTO: 'AUTO' };
-    modeChip.innerText = command;
-    
     if (command === 'OPEN') {
       curtainStateLabel.innerText = 'Curtain Opening...';
       curtainEmoji.innerHTML = '🪟✨';
@@ -655,9 +658,10 @@
     decisionPreview.innerText = `executing ${command}…`;
     aiDecisionText.innerText = `Manual override: ${command}`;
 
-    // Send command to Firebase - ESP8266 listens to this node
+    // Send command to Firebase
     try {
-      await database.ref('/commands').set({
+      const commandsRef = ref(database, '/commands');
+      await set(commandsRef, {
         action: command,
         timestamp: Date.now(),
         source: 'dashboard'
@@ -665,21 +669,22 @@
       
       feedbackStreamDisplay.innerHTML = `✅ Command "${command}" sent to ESP8266 via Firebase cloud!`;
       
-      // Clear command after 1 second (optional, ESP will also clear it)
-      setTimeout(() => {
-        database.ref('/commands').once('value', (snap) => {
-          if (snap.val() && snap.val().action === command) {
-            // Only clear if it's still our command
-            database.ref('/commands').set(null);
-          }
+      // Clear command after 2 seconds
+      setTimeout(async () => {
+        const currentRef = ref(database, '/commands');
+        const snapshot = await new Promise(resolve => {
+          onValue(currentRef, resolve, { onlyOnce: true });
         });
+        if (snapshot.val() && snapshot.val().action === command) {
+          await set(currentRef, null);
+        }
       }, 2000);
       
     } catch (error) {
       console.error('Error sending command:', error);
       feedbackStreamDisplay.innerHTML = `❌ Failed to send command: ${error.message}`;
     }
-  }
+  };
 
   // Progress bar animation
   let progressValue = 0;
@@ -691,11 +696,8 @@
   // Initialize
   function init() {
     setupFirebaseListeners();
-    console.log('NovaCurtain AI Dashboard initialized - listening to Firebase');
+    console.log('NovaCurtain AI Dashboard initialized - using Firebase Modular SDK v12.14.0');
   }
-
-  // Expose sendCommand globally
-  window.sendCommand = sendCommand;
   
   init();
 </script>
