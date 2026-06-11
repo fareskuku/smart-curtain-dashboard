@@ -22,248 +22,715 @@
     box-sizing: border-box;
   }
 
+  :root {
+    --bg-primary: #0a0a1a;
+    --bg-secondary: #0f0f23;
+    --glass-bg: rgba(25, 25, 45, 0.7);
+    --glass-border: rgba(100, 100, 255, 0.2);
+    --neon-cyan: #00f3ff;
+    --neon-purple: #b000ff;
+    --neon-pink: #ff00aa;
+    --neon-green: #00ff88;
+    --neon-orange: #ff6b00;
+    --neon-red: #ff3366;
+    --card-radius: 24px;
+    --glow-sm: 0 0 5px rgba(0, 243, 255, 0.5);
+    --glow-md: 0 0 15px rgba(0, 243, 255, 0.3);
+  }
+
   body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(135deg, #0a0a1a 0%, #0d0d1a 50%, #0a0a1a 100%);
     min-height: 100vh;
-    padding: 20px;
+    color: #fff;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 20% 50%, rgba(0, 243, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(176, 0, 255, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
   }
 
   .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
-  }
-
-  h1 {
-    color: white;
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-    margin-bottom: 20px;
-  }
-
-  .card {
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 15px;
     padding: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+    z-index: 1;
   }
 
-  .card h3 {
-    margin-bottom: 15px;
-    color: #333;
-    border-bottom: 2px solid #667eea;
-    padding-bottom: 5px;
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--card-radius);
+    margin-bottom: 30px;
+    animation: fadeInDown 0.6s ease;
   }
 
-  .sensor-value {
-    font-size: 36px;
-    font-weight: bold;
-    color: #667eea;
-    margin: 10px 0;
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
   }
 
-  .status-badge {
-    display: inline-block;
-    padding: 5px 15px;
-    border-radius: 20px;
-    font-weight: bold;
+  .logo-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    box-shadow: var(--glow-sm);
+    animation: pulseGlow 2s infinite;
   }
 
-  .open {
-    background: #10b981;
-    color: white;
+  .logo h1 {
+    font-size: 28px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff, var(--neon-cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
-  .closed {
-    background: #ef4444;
-    color: white;
+  .logo p {
+    font-size: 12px;
+    color: #888;
+    letter-spacing: 1px;
   }
 
-  .partial {
-    background: #f59e0b;
-    color: white;
+  .status-panel {
+    display: flex;
+    gap: 20px;
+    align-items: center;
   }
 
-  .auto {
-    background: #3b82f6;
-    color: white;
+  .live-badge {
+    background: rgba(0, 255, 136, 0.15);
+    border: 1px solid var(--neon-green);
+    border-radius: 50px;
+    padding: 8px 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
   }
 
-  button {
-    background: #667eea;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    margin: 5px;
-    transition: transform 0.2s;
+  .live-dot {
+    width: 10px;
+    height: 10px;
+    background: var(--neon-green);
+    border-radius: 50%;
+    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 8px var(--neon-green);
   }
 
-  button:hover {
-    transform: scale(1.05);
-    background: #5a67d8;
-  }
-
-  .last-update {
-    text-align: center;
-    color: white;
-    margin-top: 20px;
+  .time-badge {
+    background: rgba(0, 243, 255, 0.1);
+    border: 1px solid var(--neon-cyan);
+    border-radius: 50px;
+    padding: 8px 18px;
+    font-family: 'Courier New', monospace;
     font-size: 14px;
   }
 
-  .status-light {
-    width: 12px;
-    height: 12px;
+  /* Grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--card-radius);
+    padding: 24px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeInUp 0.6s ease backwards;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+    transition: left 0.5s;
+  }
+
+  .card:hover::before {
+    left: 100%;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    border-color: var(--neon-cyan);
+    box-shadow: var(--glow-md);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #888;
+  }
+
+  .card-icon {
+    font-size: 28px;
+    filter: drop-shadow(0 0 5px var(--neon-cyan));
+  }
+
+  /* Sensor Values */
+  .sensor-main {
+    font-size: 48px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff, var(--neon-cyan));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 10px 0;
+  }
+
+  .sensor-unit {
+    font-size: 16px;
+    color: #666;
+  }
+
+  .sensor-label {
+    font-size: 12px;
+    color: #666;
+    margin-top: 10px;
+  }
+
+  /* Status Badge */
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 14px;
+    animation: slideIn 0.3s ease;
+  }
+
+  .badge-open { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0a0a1a; }
+  .badge-closed { background: linear-gradient(135deg, #ff3366, #cc0044); color: #fff; }
+  .badge-partial { background: linear-gradient(135deg, #ffaa00, #cc8800); color: #0a0a1a; }
+  .badge-auto { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #fff; }
+
+  /* Buttons */
+  .buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .btn {
+    padding: 14px;
+    border: none;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    display: inline-block;
-    margin-right: 8px;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  .btn:active::before {
+    width: 300px;
+    height: 300px;
+  }
+
+  .btn-open { background: linear-gradient(135deg, #00ff88, #00cc6a); color: #0a0a1a; }
+  .btn-open:hover { transform: scale(1.02); box-shadow: 0 0 20px #00ff88; }
+  .btn-close { background: linear-gradient(135deg, #ff3366, #cc0044); color: #fff; }
+  .btn-close:hover { transform: scale(1.02); box-shadow: 0 0 20px #ff3366; }
+  .btn-partial { background: linear-gradient(135deg, #ffaa00, #cc8800); color: #0a0a1a; }
+  .btn-partial:hover { transform: scale(1.02); box-shadow: 0 0 20px #ffaa00; }
+  .btn-auto { background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple)); color: #fff; }
+  .btn-auto:hover { transform: scale(1.02); box-shadow: 0 0 20px var(--neon-cyan); }
+
+  /* Timeline */
+  .timeline {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    padding: 16px;
+    margin-top: 15px;
+  }
+
+  .decision-text {
+    font-size: 13px;
+    color: #aaa;
+    font-family: 'Courier New', monospace;
+    word-break: break-word;
+  }
+
+  .feedback-text {
+    font-size: 12px;
+    color: var(--neon-cyan);
+    margin-top: 12px;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* Progress Bar */
+  .progress-container {
+    margin-top: 15px;
+  }
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #666;
+    margin-bottom: 5px;
+  }
+  .progress-bar {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-purple));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* Logic Panel */
+  .logic-panel {
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 16px;
+    padding: 15px;
+    margin-top: 15px;
+    border-left: 3px solid var(--neon-cyan);
+  }
+
+  .logic-title {
+    font-size: 11px;
+    color: var(--neon-cyan);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .logic-rules {
+    font-size: 10px;
+    color: #666;
+    line-height: 1.6;
+  }
+
+  .logic-rules span {
+    color: var(--neon-green);
+  }
+
+  /* Animations */
+  @keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 5px rgba(0, 243, 255, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(0, 243, 255, 0.8); }
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 640px) {
+    .grid { grid-template-columns: 1fr; }
+    .header { flex-direction: column; gap: 15px; text-align: center; }
+    .sensor-main { font-size: 36px; }
   }
 </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🚪 Smart Curtain Cloud Dashboard</h1>
 
-    <div class="cards">
-      <!-- Status Card -->
-      <div class="card">
-        <h3>📊 Current Status</h3>
-        <div id="modeStatus">Loading...</div>
-        <div class="sensor-value" id="curtainStatus">—</div>
-        <div id="connectionStatus" style="margin-top: 10px;">
-          <span class="status-light" id="statusLight"></span>
-          <span id="statusText">Connecting to Firebase...</span>
-        </div>
-      </div>
-
-      <!-- Sensors Card -->
-      <div class="card">
-        <h3>🌡️ Sensor Readings</h3>
-        <p>💡 Light: <strong id="lightValue">—</strong> lux</p>
-        <p>🔆 LDR Digital: <strong id="ldrValue">—</strong></p>
-        <p>🌡️ Temperature: <strong id="tempValue">—</strong> °C</p>
-        <p>💧 Humidity: <strong id="humValue">—</strong> %</p>
-        <p>⚙️ Servo Angle: <strong id="servoAngle">—</strong>°</p>
-      </div>
-
-      <!-- Control Card -->
-      <div class="card">
-        <h3>🎮 Controls</h3>
-        <button onclick="sendCommand('OPEN')">☀️ OPEN</button>
-        <button onclick="sendCommand('CLOSE')">🌙 CLOSE</button>
-        <button onclick="sendCommand('PARTIAL')">⛅ PARTIAL</button>
-        <button onclick="sendCommand('AUTO')">🤖 AUTO</button>
-        <p style="margin-top: 15px; font-size: 12px; color: #666;">
-          ⚡ Commands sent via Firebase to ESP8266
-        </p>
-      </div>
-
-      <!-- Decision Card -->
-      <div class="card">
-        <h3>🧠 Last Decision</h3>
-        <p id="lastDecision">Waiting for data...</p>
-        <p style="margin-top: 10px; font-size: 12px; color: #666;" id="feedback">—</p>
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <div class="logo-icon">🪟</div>
+      <div>
+        <h1>NovaCurtain AI</h1>
+        <p>Powered by Firebase | Smart Auto-Adjusting Curtains</p>
       </div>
     </div>
-
-    <div class="last-update">
-      Last update: <span id="lastUpdate">—</span>
+    <div class="status-panel">
+      <div class="live-badge">
+        <div class="live-dot"></div>
+        <span>LIVE SYNC</span>
+      </div>
+      <div class="time-badge" id="liveTime">--:--:--</div>
     </div>
   </div>
 
-  <script type="module">
-    // ========== YOUR FIREBASE CONFIGURATION ==========
-    const firebaseConfig = {
-      apiKey: "AIzaSyB9k1TpKOJxEMPgQf3yGLkeN_twr1wCOBc",
-      authDomain: "smart-curtain-iot.firebaseapp.com",
-      databaseURL: "https://smart-curtain-iot-default-rtdb.firebaseio.com",
-      projectId: "smart-curtain-iot",
-      storageBucket: "smart-curtain-iot.firebasestorage.app",
-      messagingSenderId: "353682612211",
-      appId: "1:353682612211:web:e6e757a101e1c0c4f8fc86"
-    };
+  <!-- Main Grid -->
+  <div class="grid">
+    <!-- Status Card -->
+    <div class="card" style="animation-delay: 0.1s">
+      <div class="card-header">
+        <span class="card-title">Current State</span>
+        <span class="card-icon">🎭</span>
+      </div>
+      <div id="curtainStatusDisplay" class="sensor-main">—</div>
+      <div id="modeDisplay" style="font-size: 12px; color: #888; margin-top: 5px">Mode: AUTO</div>
+      <div class="progress-container">
+        <div class="progress-label">
+          <span>Position</span>
+          <span id="anglePercent">0%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="angleFill"></div>
+        </div>
+      </div>
+    </div>
 
-    // Import Firebase
-    import { initializeApp } from 'firebase/app';
-    import { getDatabase, ref, onValue, set } from 'firebase/database';
+    <!-- Sensors Card -->
+    <div class="card" style="animation-delay: 0.2s">
+      <div class="card-header">
+        <span class="card-title">Environmental Sensors</span>
+        <span class="card-icon">🌡️</span>
+      </div>
+      <div class="sensor-main" id="tempValue">—<span class="sensor-unit">°C</span></div>
+      <div class="sensor-label" id="tempStatus">Thermal status</div>
+      <div style="margin-top: 15px; display: flex; justify-content: space-between">
+        <div>
+          <div style="font-size: 11px; color: #666">HUMIDITY</div>
+          <div style="font-size: 24px; font-weight: 700" id="humValue">—<span style="font-size: 12px">%</span></div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: #666">LIGHT</div>
+          <div style="font-size: 24px; font-weight: 700" id="lightValue">—<span style="font-size: 12px">lux</span></div>
+        </div>
+        <div>
+          <div style="font-size: 11px; color: #666">LDR</div>
+          <div style="font-size: 24px; font-weight: 700" id="ldrValue">—</div>
+        </div>
+      </div>
+    </div>
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-
-    // Update UI when data changes
-    const sensorsRef = ref(database, '/sensors');
-    const statusRef = ref(database, '/status');
-
-    onValue(sensorsRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        document.getElementById('lightValue').innerHTML = data.lightValue || '—';
-        document.getElementById('ldrValue').innerHTML = data.ldrDigital ? 'HIGH ☀️' : 'LOW 🌙';
-        document.getElementById('tempValue').innerHTML = data.temperature ? data.temperature.toFixed(1) : '—';
-        document.getElementById('humValue').innerHTML = data.humidity ? data.humidity.toFixed(0) : '—';
-        document.getElementById('servoAngle').innerHTML = data.servoAngle || '—';
-      }
-    });
-
-    onValue(statusRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        let curtainClass = '';
-        if (data.curtainStatus?.includes('Open')) curtainClass = 'open';
-        else if (data.curtainStatus?.includes('Closed')) curtainClass = 'closed';
-        else if (data.curtainStatus?.includes('Half')) curtainClass = 'partial';
-        
-        document.getElementById('curtainStatus').innerHTML = 
-          `<span class="status-badge ${curtainClass}">${data.curtainStatus || '—'}</span>`;
-        document.getElementById('modeStatus').innerHTML = `Mode: <strong>${data.mode || 'AUTO'}</strong>`;
-        document.getElementById('lastDecision').innerHTML = data.lastDecision || 'Waiting...';
-        document.getElementById('feedback').innerHTML = `📡 ${data.feedback || '—'}`;
-      }
-    });
-
-    // Update timestamp every second
-    setInterval(() => {
-      document.getElementById('lastUpdate').innerHTML = new Date().toLocaleTimeString();
-    }, 1000);
-
-    // Connection status
-    const connectedRef = ref(database, '.info/connected');
-    onValue(connectedRef, (snap) => {
-      if (snap.val() === true) {
-        document.getElementById('statusText').innerHTML = 'Connected to Firebase ✅';
-        document.getElementById('statusLight').style.background = '#10b981';
-      } else {
-        document.getElementById('statusText').innerHTML = 'Disconnected ❌';
-        document.getElementById('statusLight').style.background = '#ef4444';
-      }
-    });
-
-    // Send command to ESP8266
-    window.sendCommand = async function(command) {
-      const commandsRef = ref(database, '/commands');
-      await set(commandsRef, {
-        action: command,
-        timestamp: Date.now()
-      });
+    <!-- Controls Card -->
+    <div class="card" style="animation-delay: 0.3s">
+      <div class="card-header">
+        <span class="card-title">Command Center</span>
+        <span class="card-icon">🎮</span>
+      </div>
+      <div class="buttons-grid">
+        <button class="btn btn-open" onclick="sendCommand('OPEN')">☀️ OPEN</button>
+        <button class="btn btn-close" onclick="sendCommand('CLOSE')">🌙 CLOSE</button>
+        <button class="btn btn-partial" onclick="sendCommand('PARTIAL')">⛅ PARTIAL</button>
+        <button class="btn btn-auto" onclick="sendCommand('AUTO')">🤖 AUTO</button>
+      </div>
+      <div class="feedback-text" id="commandFeedback">Ready for commands</div>
       
-      document.getElementById('feedback').innerHTML = `📡 Command "${command}" sent to ESP8266...`;
-      
-      // Clear command after 2 seconds
-      setTimeout(async () => {
-        await set(commandsRef, null);
-      }, 2000);
-    };
+      <!-- Auto Logic Explanation -->
+      <div class="logic-panel">
+        <div class="logic-title">🤖 AUTO MODE LOGIC</div>
+        <div class="logic-rules">
+          🌙 <span>DARK</span> (&lt;300 lux) → CLOSE (privacy)<br>
+          ☀️ <span>NORMAL LIGHT</span> (300-800 lux) → OPEN (let light in)<br>
+          🔆 <span>STRONG LIGHT</span> (&gt;800 lux) + &lt;30°C → PARTIAL (shade)<br>
+          🔥 <span>STRONG LIGHT</span> (&gt;800 lux) + ≥30°C → CLOSE (keep heat out)
+        </div>
+      </div>
+    </div>
 
-    console.log("Dashboard ready! Waiting for ESP8266 data...");
-  </script>
+    <!-- Decision Card -->
+    <div class="card" style="animation-delay: 0.4s">
+      <div class="card-header">
+        <span class="card-title">AI Decision Log</span>
+        <span class="card-icon">🧠</span>
+      </div>
+      <div class="timeline">
+        <div class="decision-text" id="lastDecision">Waiting for sensor data...</div>
+        <div class="feedback-text" id="feedbackDetail" style="margin-top: 12px">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Second Row -->
+  <div class="grid">
+    <div class="card" style="animation-delay: 0.5s">
+      <div class="card-header">
+        <span class="card-title">Cloud Connection</span>
+        <span class="card-icon">☁️</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 12px">
+        <div id="connectionDot" style="width: 12px; height: 12px; border-radius: 50%; background: #666"></div>
+        <span id="connectionStatus">Connecting to Firebase...</span>
+      </div>
+      <div style="margin-top: 15px; font-size: 11px; color: #666">
+        Last update: <span id="lastUpdate">—</span>
+      </div>
+    </div>
+
+    <div class="card" style="animation-delay: 0.6s">
+      <div class="card-header">
+        <span class="card-title">Thermal Protection</span>
+        <span class="card-icon">🔥</span>
+      </div>
+      <div id="thermalStatus" style="font-size: 14px">Monitoring temperature...</div>
+      <div style="margin-top: 10px; font-size: 11px; color: #666">
+        Auto-closes when >30°C + strong light
+      </div>
+    </div>
+
+    <div class="card" style="animation-delay: 0.7s">
+      <div class="card-header">
+        <span class="card-title">System Health</span>
+        <span class="card-icon">⚡</span>
+      </div>
+      <div style="display: flex; gap: 15px; flex-wrap: wrap">
+        <div><span style="color: #00ff88">✓</span> WiFi Connected</div>
+        <div><span style="color: #00ff88">✓</span> Firebase Sync</div>
+        <div><span style="color: #00ff88" id="sensorHealth">✓</span> Sensors Active</div>
+      </div>
+    </div>
+
+    <div class="card" style="animation-delay: 0.8s">
+      <div class="card-header">
+        <span class="card-title">Servo Position</span>
+        <span class="card-icon">⚙️</span>
+      </div>
+      <div class="sensor-main" id="servoAngle">—<span class="sensor-unit">°</span></div>
+      <div class="sensor-label">Curtain angle</div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  // ========== FIREBASE CONFIGURATION ==========
+  const firebaseConfig = {
+    apiKey: "AIzaSyB9k1TpKOJxEMPgQf3yGLkeN_twr1wCOBc",
+    authDomain: "smart-curtain-iot.firebaseapp.com",
+    databaseURL: "https://smart-curtain-iot-default-rtdb.firebaseio.com",
+    projectId: "smart-curtain-iot",
+    storageBucket: "smart-curtain-iot.firebasestorage.app",
+    messagingSenderId: "353682612211",
+    appId: "1:353682612211:web:e6e757a101e1c0c4f8fc86"
+  };
+
+  // Import Firebase
+  import { initializeApp } from 'firebase/app';
+  import { getDatabase, ref, onValue, set } from 'firebase/database';
+
+  // Initialize
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+
+  // DOM Elements
+  const curtainStatusDisplay = document.getElementById('curtainStatusDisplay');
+  const modeDisplay = document.getElementById('modeDisplay');
+  const anglePercent = document.getElementById('anglePercent');
+  const angleFill = document.getElementById('angleFill');
+  const tempValue = document.getElementById('tempValue');
+  const tempStatus = document.getElementById('tempStatus');
+  const humValue = document.getElementById('humValue');
+  const lightValue = document.getElementById('lightValue');
+  const ldrValue = document.getElementById('ldrValue');
+  const lastDecision = document.getElementById('lastDecision');
+  const feedbackDetail = document.getElementById('feedbackDetail');
+  const connectionDot = document.getElementById('connectionDot');
+  const connectionStatus = document.getElementById('connectionStatus');
+  const lastUpdate = document.getElementById('lastUpdate');
+  const thermalStatus = document.getElementById('thermalStatus');
+  const sensorHealth = document.getElementById('sensorHealth');
+  const servoAngle = document.getElementById('servoAngle');
+  const commandFeedback = document.getElementById('commandFeedback');
+
+  let currentSensors = { light: 0, temp: 0 };
+
+  // Update UI
+  function updateCurtainUI(curtainStatus, mode, angle) {
+    let badgeClass = '';
+    let displayText = curtainStatus || '—';
+    
+    if (displayText.includes('Open')) badgeClass = 'badge-open';
+    else if (displayText.includes('Closed')) badgeClass = 'badge-closed';
+    else if (displayText.includes('Half')) badgeClass = 'badge-partial';
+    else badgeClass = 'badge-auto';
+    
+    curtainStatusDisplay.innerHTML = `<span class="status-badge ${badgeClass}">${displayText}</span>`;
+    modeDisplay.innerHTML = `Mode: <span style="color: #00f3ff">${mode || 'AUTO'}</span>`;
+    
+    const percent = angle ? (angle / 180) * 100 : 0;
+    anglePercent.innerHTML = `${Math.round(percent)}%`;
+    angleFill.style.width = `${percent}%`;
+    servoAngle.innerHTML = angle || '—';
+  }
+
+  function updateSensorUI(temp, hum, light, ldrDigital) {
+    tempValue.innerHTML = temp ? `${temp.toFixed(1)}<span class="sensor-unit">°C</span>` : '—<span class="sensor-unit">°C</span>';
+    humValue.innerHTML = hum ? `${hum.toFixed(0)}<span class="sensor-unit">%</span>` : '—<span class="sensor-unit">%</span>';
+    lightValue.innerHTML = light || '—';
+    ldrValue.innerHTML = ldrDigital ? 'HIGH ☀️' : 'LOW 🌙';
+    
+    currentSensors = { light: light || 0, temp: temp || 0 };
+    
+    if (temp && temp > 30) {
+      tempStatus.innerHTML = '⚠️ High temperature - heat protection active';
+      tempStatus.style.color = '#ff3366';
+      thermalStatus.innerHTML = '🔥 High temperature detected! Curtain will close if strong light.';
+      thermalStatus.style.color = '#ff3366';
+    } else {
+      tempStatus.innerHTML = '✓ Comfortable temperature range';
+      tempStatus.style.color = '#888';
+      thermalStatus.innerHTML = '✓ Temperature normal - passive cooling';
+      thermalStatus.style.color = '#00ff88';
+    }
+  }
+
+  // Firebase Listeners
+  const sensorsRef = ref(database, '/sensors');
+  const statusRef = ref(database, '/status');
+
+  onValue(sensorsRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      updateSensorUI(data.temperature, data.humidity, data.lightValue, data.ldrDigital);
+      updateCurtainUI(null, null, data.servoAngle);
+      lastUpdate.innerHTML = new Date().toLocaleTimeString();
+    }
+  });
+
+  onValue(statusRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      updateCurtainUI(data.curtainStatus, data.mode, null);
+      lastDecision.innerHTML = data.lastDecision || 'Waiting...';
+      feedbackDetail.innerHTML = `📡 ${data.feedback || '—'}`;
+    }
+  });
+
+  // Connection Status
+  const connectedRef = ref(database, '.info/connected');
+  onValue(connectedRef, (snap) => {
+    if (snap.val() === true) {
+      connectionDot.style.background = '#00ff88';
+      connectionDot.style.boxShadow = '0 0 8px #00ff88';
+      connectionStatus.innerHTML = 'Connected to Firebase Cloud ✅';
+      sensorHealth.innerHTML = '✓';
+      sensorHealth.style.color = '#00ff88';
+    } else {
+      connectionDot.style.background = '#ff3366';
+      connectionStatus.innerHTML = 'Disconnected - Check internet ❌';
+      sensorHealth.innerHTML = '⚠';
+      sensorHealth.style.color = '#ffaa00';
+    }
+  });
+
+  // Live Clock
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('liveTime').innerHTML = now.toLocaleTimeString();
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Send Command to ESP8266
+  window.sendCommand = async function(command) {
+    const commandsRef = ref(database, '/commands');
+    
+    await set(commandsRef, {
+      action: command,
+      timestamp: Date.now(),
+      source: 'dashboard'
+    });
+    
+    let feedbackMsg = '';
+    if (command === 'OPEN') feedbackMsg = '☀️ Manual OPEN command sent - Curtain will open fully';
+    else if (command === 'CLOSE') feedbackMsg = '🌙 Manual CLOSE command sent - Curtain will close fully';
+    else if (command === 'PARTIAL') feedbackMsg = '⛅ Manual PARTIAL command sent - Curtain will set to 90°';
+    else if (command === 'AUTO') feedbackMsg = '🤖 AUTO mode enabled - Curtain will adjust based on sensors (Dark→Close, Normal→Open, Strong Light+Hot→Close, Strong Light+Cool→Partial)';
+    
+    commandFeedback.innerHTML = `✅ ${feedbackMsg}`;
+    commandFeedback.style.color = '#00ff88';
+    
+    // Clear command after ESP8266 processes it (2 seconds)
+    setTimeout(async () => {
+      await set(commandsRef, null);
+      setTimeout(() => {
+        commandFeedback.innerHTML = 'Ready for commands';
+        commandFeedback.style.color = '#00f3ff';
+      }, 3000);
+    }, 2000);
+  };
+
+  console.log('🚀 NovaCurtain AI Dashboard Ready - Premium Edition with AUTO Logic');
+</script>
+
 </body>
 </html>
